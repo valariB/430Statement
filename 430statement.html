@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invoice Dashboard - Airbase</title>
+  <title>Invoice Dashboard</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f0f2f5;
-      margin: 0;
       padding: 20px;
     }
     .dashboard {
@@ -23,82 +21,99 @@
       text-align: center;
       color: #333;
     }
-    .section {
-      margin-top: 40px;
-    }
-    .section h2 {
-      color: #555;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
     th, td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
     }
-    th {
-      background-color: #f9f9f9;
-    }
-    input[type="number"], select {
+    input[type="text"], input[type="number"] {
       width: 100%;
-      padding: 8px;
+      padding: 6px;
       box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 4px;
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
     <h1>Invoice Dashboard</h1>
-
-    <div class="section">
-      <h2>Revenue & Fees</h2>
-      <table>
-        <tr><th>Category</th><th>Amount (USD)</th></tr>
-        <tr><td>Total Revenue</td><td><input type="number" placeholder="Enter amount" /></td></tr>
-        <tr><td>Management Fee & Platform Fee</td><td><input type="number" placeholder="Enter amount" /></td></tr>
-        <tr><td>Housekeeping & Supplies Fees</td><td><input type="number" placeholder="Enter amount" /></td></tr>
-        <tr><td>OTA & Host Fees</td><td><input type="number" placeholder="Enter amount" /></td></tr>
-      </table>
-    </div>
-
-    <div class="section">
-      <h2>Expense Breakdown</h2>
-      <table>
-        <tr><th>GL Code</th><th>Line</th><th>Area</th><th>Description</th><th>Amount (USD)</th></tr>
+    <table>
+      <thead>
         <tr>
-          <td>
-            <select>
-              <option value="">Select GL</option>
-              <option value="Rent & Lease Expense">Rent & Lease Expense</option>
-              <option value="Commercial Rent - Sales Tax">Commercial Rent - Sales Tax</option>
-              <option value="Sales Tax Credit">Sales Tax Credit</option>
-              <option value="CAM Expense">CAM Expense</option>
-              <option value="Utilities">Utilities</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Insurance">Insurance</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Supplies">Supplies</option>
-              <option value="Professional Services">Professional Services</option>
-              <!-- Add more GLs as needed -->
-            </select>
-          </td>
-          <td>1.0</td>
-          <td>Operating</td>
-          <td><input type="text" placeholder="Description" /></td>
-          <td><input type="number" placeholder="Amount" /></td>
+          <th>Description</th>
+          <th>Custom Detail</th>
+          <th>Amount (USD)</th>
         </tr>
-        <!-- Duplicate this row as needed for more entries -->
-      </table>
-    </div>
-
-    <p style="margin-top: 40px; text-align: center;">Processed via <strong>Airbase</strong></p>
+      </thead>
+      <tbody id="invoice-table">
+        <!-- Rows will be inserted here -->
+      </tbody>
+    </table>
   </div>
+
+  <script>
+    const items = [
+      { description: "Rent & Lease Expense", fixed: true },
+      { description: "Commercial Rent - Sales Tax", fixed: true },
+      { description: "Sales Tax Credit", fixed: true },
+      { description: "CAM Expense", fixed: true },
+      { description: "Housekeeping: ", fixed: false },
+      { description: "Maintenance: ", fixed: false },
+      { description: "Utilities", fixed: true },
+      { description: "Insurance", fixed: true },
+      { description: "Marketing: ", fixed: false },
+      { description: "Professional Services: ", fixed: false }
+    ];
+
+    const table = document.getElementById("invoice-table");
+
+    items.forEach((item, index) => {
+      const row = document.createElement("tr");
+
+      // Description
+      const descCell = document.createElement("td");
+      descCell.textContent = item.description;
+      row.appendChild(descCell);
+
+      // Custom Detail (only if description ends with ": ")
+      const detailCell = document.createElement("td");
+      if (!item.fixed) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Enter detail";
+        input.oninput = () => calculateAmount(index, input.value);
+        detailCell.appendChild(input);
+      } else {
+        detailCell.textContent = "—";
+      }
+      row.appendChild(detailCell);
+
+      // Amount
+      const amountCell = document.createElement("td");
+      const amountInput = document.createElement("input");
+      amountInput.type = "number";
+      amountInput.placeholder = "Auto or manual";
+      amountInput.id = `amount-${index}`;
+      amountCell.appendChild(amountInput);
+      row.appendChild(amountCell);
+
+      table.appendChild(row);
+    });
+
+    function calculateAmount(index, detail) {
+      const amountField = document.getElementById(`amount-${index}`);
+      // Example logic: assign values based on detail keywords
+      if (detail.toLowerCase().includes("deep clean")) {
+        amountField.value = 250;
+      } else if (detail.toLowerCase().includes("plumbing")) {
+        amountField.value = 180;
+      } else {
+        amountField.value = "";
+      }
+    }
+  </script>
 </body>
 </html>
