@@ -7,10 +7,11 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f0f2f5;
+      margin: 0;
       padding: 20px;
     }
     .dashboard {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: auto;
       background: #fff;
       padding: 30px;
@@ -21,99 +22,108 @@
       text-align: center;
       color: #333;
     }
+    .section {
+      margin-top: 40px;
+    }
+    .section h2 {
+      color: #444;
+      margin-bottom: 10px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-bottom: 20px;
     }
     th, td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f9f9f9;
     }
     input[type="text"], input[type="number"] {
       width: 100%;
       padding: 6px;
       box-sizing: border-box;
     }
+    .total {
+      text-align: right;
+      font-weight: bold;
+      padding: 10px;
+      background-color: #eef;
+    }
   </style>
 </head>
 <body>
   <div class="dashboard">
     <h1>Invoice Dashboard</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Custom Detail</th>
-          <th>Amount (USD)</th>
-        </tr>
-      </thead>
-      <tbody id="invoice-table">
-        <!-- Rows will be inserted here -->
-      </tbody>
-    </table>
+
+    <div class="section" id="operating-expenses">
+      <h2>Operating Expenses</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>GL Code</th>
+            <th>Line</th>
+            <th>Area</th>
+            <th>Description</th>
+            <th>Detail</th>
+            <th>Amount (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OW</td>
+            <td>4.0</td>
+            <td>Operating</td>
+            <td>CAM Expense</td>
+            <td>—</td>
+            <td><input type="number" class="amount" data-group="operating" /></td>
+          </tr>
+          <tr>
+            <td>OW</td>
+            <td>12.0</td>
+            <td>Operating</td>
+            <td>Reactive Supplies - Fire & Safety:</td>
+            <td><input type="text" placeholder="e.g. Smoke Detector" /></td>
+            <td><input type="number" class="amount" data-group="operating" /></td>
+          </tr>
+          <tr>
+            <td>OW</td>
+            <td>13.0</td>
+            <td>Operating</td>
+            <td>Maintenance:</td>
+            <td><input type="text" placeholder="e.g. Plumbing" /></td>
+            <td><input type="number" class="amount" data-group="operating" /></td>
+          </tr>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+      <div class="total" id="total-operating">Total: $0.00</div>
+    </div>
+
+    <!-- Repeat similar sections for Revenue, Fees, etc. -->
+
   </div>
 
   <script>
-    const items = [
-      { description: "Rent & Lease Expense", fixed: true },
-      { description: "Commercial Rent - Sales Tax", fixed: true },
-      { description: "Sales Tax Credit", fixed: true },
-      { description: "CAM Expense", fixed: true },
-      { description: "Housekeeping: ", fixed: false },
-      { description: "Maintenance: ", fixed: false },
-      { description: "Utilities", fixed: true },
-      { description: "Insurance", fixed: true },
-      { description: "Marketing: ", fixed: false },
-      { description: "Professional Services: ", fixed: false }
-    ];
-
-    const table = document.getElementById("invoice-table");
-
-    items.forEach((item, index) => {
-      const row = document.createElement("tr");
-
-      // Description
-      const descCell = document.createElement("td");
-      descCell.textContent = item.description;
-      row.appendChild(descCell);
-
-      // Custom Detail (only if description ends with ": ")
-      const detailCell = document.createElement("td");
-      if (!item.fixed) {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Enter detail";
-        input.oninput = () => calculateAmount(index, input.value);
-        detailCell.appendChild(input);
-      } else {
-        detailCell.textContent = "—";
-      }
-      row.appendChild(detailCell);
-
-      // Amount
-      const amountCell = document.createElement("td");
-      const amountInput = document.createElement("input");
-      amountInput.type = "number";
-      amountInput.placeholder = "Auto or manual";
-      amountInput.id = `amount-${index}`;
-      amountCell.appendChild(amountInput);
-      row.appendChild(amountCell);
-
-      table.appendChild(row);
-    });
-
-    function calculateAmount(index, detail) {
-      const amountField = document.getElementById(`amount-${index}`);
-      // Example logic: assign values based on detail keywords
-      if (detail.toLowerCase().includes("deep clean")) {
-        amountField.value = 250;
-      } else if (detail.toLowerCase().includes("plumbing")) {
-        amountField.value = 180;
-      } else {
-        amountField.value = "";
-      }
+    function updateTotals() {
+      const groups = ['operating']; // Add more groups as needed
+      groups.forEach(group => {
+        const inputs = document.querySelectorAll(`.amount[data-group="${group}"]`);
+        let total = 0;
+        inputs.forEach(input => {
+          const val = parseFloat(input.value);
+          if (!isNaN(val)) total += val;
+        });
+        document.getElementById(`total-${group}`).textContent = `Total: $${total.toFixed(2)}`;
+      });
     }
+
+    document.querySelectorAll('.amount').forEach(input => {
+      input.addEventListener('input', updateTotals);
+    });
   </script>
 </body>
 </html>
+
