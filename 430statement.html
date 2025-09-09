@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Summary - Airbase</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    .section-title {
+      margin-top: 40px;
+      font-size: 1.2em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Invoice Summary</h1>
+
+  <div class="section-title">Revenue & Fees</div>
+  <table>
+    <tr><th>Category</th><th>Amount</th></tr>
+    <tr><td>Total Revenue</td><td>$13,306.25</td></tr>
+    <tr><td>Management Fee & Platform Fee</td><td>$2,395.12</td></tr>
+    <tr><td>Housekeeping & Supplies Fees</td><td>$2,002.00</td></tr>
+    <tr><td>OTA & Host Fees</td><td>$429.05</td></tr>
+  </table>
+
+  <div class="section-title">Expense Breakdown</div>
+  <table>
+    <tr><th>GL Code</th><th>Line</th><th>Area</th><th>Description</th></tr>
+    <tr><td>OW</td><td>1.0</td><td>Revenue</td><td>Rent & Lease Expense</td></tr>
+    <tr><td>OW</td><td>2.0</td><td>Operating</td><td>Commercial Rent - Sales Tax</td></tr>
+    <tr><td>OW</td><td>3.0</td><td>Operating</td><td>Sales Tax Credit</td></tr>
+    <tr><td>OW</td><td>4.0</td><td>Operating</td><td>CAM Expense</td></tr>
+    <!-- Add more rows as needed -->
+  </table>
+
+  <p style="margin-top: 40px;">Processed via <strong>Airbase</strong></p>
+</body>
+</html>
