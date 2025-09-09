@@ -3,15 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invoice Summary - Airbase</title>
+  <title>Invoice Dashboard - Airbase</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .dashboard {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h1 {
+      text-align: center;
       color: #333;
+    }
+    .section {
+      margin-top: 40px;
+    }
+    .section h2 {
+      color: #555;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
     }
     table {
       width: 100%;
@@ -19,79 +37,68 @@
       margin-top: 20px;
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
       text-align: left;
     }
     th {
-      background-color: #eaeaea;
+      background-color: #f9f9f9;
     }
-    input[type="text"], input[type="number"] {
+    input[type="number"], select {
       width: 100%;
-      padding: 6px;
+      padding: 8px;
       box-sizing: border-box;
-    }
-    .section-title {
-      margin-top: 40px;
-      font-size: 1.2em;
-      color: #555;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <h1>Invoice Summary</h1>
+  <div class="dashboard">
+    <h1>Invoice Dashboard</h1>
 
-  <div class="section-title">Revenue & Fees</div>
-  <table>
-    <tr><th>Category</th><th>Amount (USD)</th></tr>
-    <tr>
-      <td>Total Revenue</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <tr>
-      <td>Management Fee & Platform Fee</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <tr>
-      <td>Housekeeping & Supplies Fees</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <tr>
-      <td>OTA & Host Fees</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-  </table>
+    <div class="section">
+      <h2>Revenue & Fees</h2>
+      <table>
+        <tr><th>Category</th><th>Amount (USD)</th></tr>
+        <tr><td>Total Revenue</td><td><input type="number" placeholder="Enter amount" /></td></tr>
+        <tr><td>Management Fee & Platform Fee</td><td><input type="number" placeholder="Enter amount" /></td></tr>
+        <tr><td>Housekeeping & Supplies Fees</td><td><input type="number" placeholder="Enter amount" /></td></tr>
+        <tr><td>OTA & Host Fees</td><td><input type="number" placeholder="Enter amount" /></td></tr>
+      </table>
+    </div>
 
-  <div class="section-title">Expense Breakdown</div>
-  <table>
-    <tr><th>Line</th><th>Area</th><th>Description</th><th>Amount (USD)</th></tr>
-    <tr>
-      <td>1.0</td>
-      <td>Revenue</td>
-      <td>Rent & Lease Expense</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <tr>
-      <td>2.0</td>
-      <td>Operating</td>
-      <td>Commercial Rent - Sales Tax</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <tr>
-      <td>3.0</td>
-      <td>Operating</td>
-      <td>Sales Tax Credit</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <tr>
-      <td>4.0</td>
-      <td>Operating</td>
-      <td>CAM Expense</td>
-      <td><input type="number" placeholder="Enter amount" /></td>
-    </tr>
-    <!-- Add more rows as needed -->
-  </table>
+    <div class="section">
+      <h2>Expense Breakdown</h2>
+      <table>
+        <tr><th>GL Code</th><th>Line</th><th>Area</th><th>Description</th><th>Amount (USD)</th></tr>
+        <tr>
+          <td>
+            <select>
+              <option value="">Select GL</option>
+              <option value="Rent & Lease Expense">Rent & Lease Expense</option>
+              <option value="Commercial Rent - Sales Tax">Commercial Rent - Sales Tax</option>
+              <option value="Sales Tax Credit">Sales Tax Credit</option>
+              <option value="CAM Expense">CAM Expense</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Insurance">Insurance</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Supplies">Supplies</option>
+              <option value="Professional Services">Professional Services</option>
+              <!-- Add more GLs as needed -->
+            </select>
+          </td>
+          <td>1.0</td>
+          <td>Operating</td>
+          <td><input type="text" placeholder="Description" /></td>
+          <td><input type="number" placeholder="Amount" /></td>
+        </tr>
+        <!-- Duplicate this row as needed for more entries -->
+      </table>
+    </div>
 
-  <p style="margin-top: 40px;">Processed via <strong>Airbase</strong></p>
+    <p style="margin-top: 40px; text-align: center;">Processed via <strong>Airbase</strong></p>
+  </div>
 </body>
 </html>
