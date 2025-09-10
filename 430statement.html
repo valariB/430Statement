@@ -43,7 +43,7 @@
     <h1>GL Entry Tool</h1>
     <div class="sub">
       GLs and base descriptions are hard-coded from your sheet. Lines with a colon <span class="mono">:</span> allow a memo. 
-      The <b>Total</b> auto-sums the four top items and cannot be edited.
+      The <b>Total</b> auto-sums the four top items and cannot be edited. Right-side figures show as positive.
     </div>
     <div class="controls">
       <input id="period" type="month" />
@@ -79,7 +79,7 @@
 
     <aside class="card">
       <h3 style="margin-top:0">Summary</h3>
-      <div id="summary"></div>
+      <div id="summary" class="mono"></div>
     </aside>
   </main>
 
@@ -151,20 +151,6 @@
     const save = (p,m) => localStorage.setItem(key(p), JSON.stringify(m));
     const csvEscape = s => { s=String(s); return /[",\\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
 
-    /* ==== LABEL NORMALIZATION (for summary grouping) ==== */
-    function displayLabelForKey(k){
-      const [gl, base] = k.split("||");
-      // Use fixed description if present, otherwise the GL name
-      return (base && base.trim()) ? base.trim() : gl;
-    }
-    function normalizeLabel(label){
-      // unify dashes, strip trailing "- 20%" variations, and squeeze spaces
-      let s = (label || "").trim().replace(/[—–]/g, "-");
-      s = s.replace(/\s*-\s*20%$/i, "");  // handles "- 20%" or "-20%"
-      s = s.replace(/\s+/g, " ").trim();
-      return s;
-    }
-
     /* ==== STATE ==== */
     let period = new Date().toISOString().slice(0,7);
     let filter = "";
@@ -176,7 +162,6 @@
       const r = base.find(b => b.gl === glName);
       return r ? (r.gl + "||" + r.base) : null;
     }
-
     function computeComponentAmounts(store){
       const result = [];
       COMPONENT_GLS.forEach(gl => {
@@ -186,15 +171,13 @@
       });
       return result;
     }
-
     function computeAirbaseDescription(store){
-      // POSITIVE values in the description (absolute value)
+      // Show POSITIVE values in parentheses (absolute value)
       const parts = computeComponentAmounts(store).map(x => `${x.gl} (${fmt(Math.abs(x.amount))})`);
       return parts.join(", ");
     }
-
     function computeTotalFromComponents(store){
-      // Total remains the signed sum (for correct math)
+      // Signed sum for accuracy; we DISPLAY it as positive below
       return computeComponentAmounts(store).reduce((a,b)=>a+b.amount,0);
     }
 
@@ -204,8 +187,12 @@
       const store = load(period);
       rowsDiv.innerHTML = "";
 
-      // Airbase description (absolute values)
-      $("#airbaseDesc").value = computeAirbaseDescription(store);
+      // Airbase description (absolute values) shown in the top box…
+      const airbaseLine = computeAirbaseDescription(store);
+      $("#airbaseDesc").value = airbaseLine;
+
+      // …and also mirrored into the summary box
+      document.getElementById("summary").textContent = airbaseLine;
 
       const items = base.filter(r => !filter || (r.gl + " " + r.base).toLowerCase().includes(filter));
 
@@ -243,12 +230,14 @@
         amountInput.className = "amount mono";
 
         if (isTotalRow){
+          // DISPLAY positive total
           amountInput.readOnly = true;
           amountInput.classList.add("readonly");
           const setComputed = () => {
             const s = load(period);
-            amountInput.value = fmt(computeTotalFromComponents(s));
-            updateSummary(); // keep summary in sync
+            const t = computeTotalFromComponents(s);
+            amountInput.value = fmt(Math.abs(t));
+            updateHeaderTotals(); // keep header totals in sync
           };
           setComputed();
         } else {
@@ -263,8 +252,10 @@
             save(period, s);
             amountInput.value = n ? fmt(n) : "";
             // refresh dependent views
-            $("#airbaseDesc").value = computeAirbaseDescription(s); // positive in description
-            render(); // re-renders Total & Summary
+            const line = computeAirbaseDescription(s);
+            $("#airbaseDesc").value = line;
+            document.getElementById("summary").textContent = line;
+            render(); // re-render to refresh computed total as positive
           };
           amountInput.addEventListener("blur", normalize);
           amountInput.addEventListener("keydown", (e) => { if (e.key === "Enter"){ e.preventDefault(); normalize(); }});
@@ -276,51 +267,17 @@
         rowsDiv.appendChild(row);
       });
 
-      // Header stats & grand total
-      const s2 = load(period);
-      const lines = Object.entries(s2).map(([k,v]) => ({k, n: parseAmt(v.amount)})).filter(x=>x.n);
-      const totalKey = findRecKeyByGL(TOTAL_GL_NAME);
-      const manualTotal = lines.reduce((a,b)=>a+b.n,0);
-      const compTotal = computeTotalFromComponents(s2);
-      const finalGrand = totalKey ? (manualTotal - (s2[totalKey]?.amount || 0) + compTotal) : manualTotal;
-
-      document.getElementById("glCount").textContent = base.length;
-      document.getElementById("memoCount").textContent = base.filter(b=>b.allowMemo).length;
-      document.getElementById("grandTotal").textContent = "$" + fmt(finalGrand);
-      document.getElementById("grandTotal2").textContent = "$" + fmt(finalGrand);
-
-      updateSummary();
+      updateHeaderTotals();
       toggleZeroRows();
     }
 
-    /* ==== SUMMARY (group by fixed description, combine "- 20%" variants, show positive in parens) ==== */
-    function updateSummary(){
-      const s = load(period);
-      // Build aggregated map: normalized label -> sum
-      const agg = new Map();
-      Object.entries(s).forEach(([k,v])=>{
-        const [gl] = k.split("||");
-        if (gl === TOTAL_GL_NAME) return; // skip computed total row
-        const amt = parseAmt(v.amount);
-        if (!amt) return;
-        const disp = displayLabelForKey(k);
-        const norm = normalizeLabel(disp).toLowerCase();
-        const current = agg.get(norm) || { label: normalizeLabel(disp), sum: 0 };
-        current.sum += amt; // signed sum
-        agg.set(norm, current);
-      });
-
-      if (agg.size === 0){
-        document.getElementById("summary").innerHTML = '<div style="color:var(--muted)">No amounts entered yet.</div>';
-        return;
-      }
-
-      // Render each aggregated line: Label (abs(sum))
-      const parts = Array.from(agg.values())
-        .sort((a,b)=>a.label.localeCompare(b.label))
-        .map(x => `<div class="flex small"><div>${x.label}</div><div class="right mono">(${fmt(Math.abs(x.sum))})</div></div>`)
-        .join("");
-      document.getElementById("summary").innerHTML = parts;
+    /* ==== HEADER TOTALS (DISPLAY POSITIVE) ==== */
+    function updateHeaderTotals(){
+      const s2 = load(period);
+      const compTotal = computeTotalFromComponents(s2);
+      const display = fmt(Math.abs(compTotal)); // show positive
+      document.getElementById("grandTotal").textContent = "$" + display;
+      document.getElementById("grandTotal2").textContent = "$" + display;
     }
 
     function toggleZeroRows(){
@@ -347,8 +304,9 @@
     document.getElementById("save").addEventListener("click", () => { save(period, load(period)); alert("Saved for period " + period); });
     document.getElementById("exportCsv").addEventListener("click", () => {
       const s = load(period);
+      // Ensure the Total exported matches the displayed positive total
       const totalKey = findRecKeyByGL("Total");
-      if (totalKey) { s[totalKey] = {memo:"", amount: computeTotalFromComponents(s)}; }
+      if (totalKey) { s[totalKey] = {memo:"", amount: Math.abs(computeTotalFromComponents(s))}; }
       const rows = [["Period","GL","Description","Amount"]];
       Object.entries(s).forEach(([k,v]) => {
         const [gl, base] = k.split("||");
@@ -361,7 +319,7 @@
     document.getElementById("exportJson").addEventListener("click", () => {
       const s = load(period);
       const totalKey = findRecKeyByGL("Total");
-      if (totalKey) { s[totalKey] = {memo:"", amount: computeTotalFromComponents(s)}; }
+      if (totalKey) { s[totalKey] = {memo:"", amount: Math.abs(computeTotalFromComponents(s))}; }
       const blob = new Blob([JSON.stringify({period, entries: s}, null, 2)], {type:"application/json"});
       const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `gl-entries-${period}.json`; a.click();
     });
