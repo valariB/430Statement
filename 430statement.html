@@ -79,7 +79,7 @@
 
     <aside class="card">
       <h3 style="margin-top:0">Summary</h3>
-      <div id="summary" class="mono"></div>
+      <div id="summary"></div>
     </aside>
   </main>
 
@@ -172,12 +172,12 @@
       return result;
     }
     function computeAirbaseDescription(store){
-      // Show POSITIVE values in parentheses (absolute value)
+      // POSITIVE values in parentheses (absolute value)
       const parts = computeComponentAmounts(store).map(x => `${x.gl} (${fmt(Math.abs(x.amount))})`);
       return parts.join(", ");
     }
     function computeTotalFromComponents(store){
-      // Signed sum for accuracy; we DISPLAY it as positive below
+      // Signed sum for correctness; we DISPLAY positive
       return computeComponentAmounts(store).reduce((a,b)=>a+b.amount,0);
     }
 
@@ -187,12 +187,9 @@
       const store = load(period);
       rowsDiv.innerHTML = "";
 
-      // Airbase description (absolute values) shown in the top box…
+      // Airbase description (absolute values) in the top box
       const airbaseLine = computeAirbaseDescription(store);
       $("#airbaseDesc").value = airbaseLine;
-
-      // …and also mirrored into the summary box
-      document.getElementById("summary").textContent = airbaseLine;
 
       const items = base.filter(r => !filter || (r.gl + " " + r.base).toLowerCase().includes(filter));
 
@@ -230,14 +227,14 @@
         amountInput.className = "amount mono";
 
         if (isTotalRow){
-          // DISPLAY positive total
+          // DISPLAY positive total (from the four items)
           amountInput.readOnly = true;
           amountInput.classList.add("readonly");
           const setComputed = () => {
             const s = load(period);
             const t = computeTotalFromComponents(s);
             amountInput.value = fmt(Math.abs(t));
-            updateHeaderTotals(); // keep header totals in sync
+            updateHeaderAndSummary(); // keep header + summary in sync
           };
           setComputed();
         } else {
@@ -251,11 +248,8 @@
             s[recKey] = rec;
             save(period, s);
             amountInput.value = n ? fmt(n) : "";
-            // refresh dependent views
-            const line = computeAirbaseDescription(s);
-            $("#airbaseDesc").value = line;
-            document.getElementById("summary").textContent = line;
-            render(); // re-render to refresh computed total as positive
+            updateHeaderAndSummary();
+            render(); // refresh computed total line display
           };
           amountInput.addEventListener("blur", normalize);
           amountInput.addEventListener("keydown", (e) => { if (e.key === "Enter"){ e.preventDefault(); normalize(); }});
@@ -267,17 +261,28 @@
         rowsDiv.appendChild(row);
       });
 
-      updateHeaderTotals();
+      updateHeaderAndSummary();
       toggleZeroRows();
     }
 
-    /* ==== HEADER TOTALS (DISPLAY POSITIVE) ==== */
-    function updateHeaderTotals(){
-      const s2 = load(period);
-      const compTotal = computeTotalFromComponents(s2);
-      const display = fmt(Math.abs(compTotal)); // show positive
+    /* ==== HEADER & SUMMARY (both DISPLAY positive) ==== */
+    function updateHeaderAndSummary(){
+      const s = load(period);
+      const compTotal = computeTotalFromComponents(s);
+      const display = fmt(Math.abs(compTotal));
+
+      // Header totals (both spots)
       document.getElementById("grandTotal").textContent = "$" + display;
       document.getElementById("grandTotal2").textContent = "$" + display;
+
+      // Summary = the amount as a whole (positive) + muted Airbase line underneath
+      const airbaseLine = computeAirbaseDescription(s);
+      document.getElementById("summary").innerHTML =
+        `<div class="total">Total (Airbase): <span class="mono">$${display}</span></div>
+         <div class="small" style="color:var(--muted);margin-top:6px">${airbaseLine || "—"}</div>`;
+
+      // Also mirror Airbase line to the top copy box
+      document.getElementById("airbaseDesc").value = airbaseLine;
     }
 
     function toggleZeroRows(){
@@ -304,7 +309,7 @@
     document.getElementById("save").addEventListener("click", () => { save(period, load(period)); alert("Saved for period " + period); });
     document.getElementById("exportCsv").addEventListener("click", () => {
       const s = load(period);
-      // Ensure the Total exported matches the displayed positive total
+      // Export Total as displayed (positive)
       const totalKey = findRecKeyByGL("Total");
       if (totalKey) { s[totalKey] = {memo:"", amount: Math.abs(computeTotalFromComponents(s))}; }
       const rows = [["Period","GL","Description","Amount"]];
