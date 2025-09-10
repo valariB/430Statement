@@ -84,8 +84,56 @@
   </main>
 
   <script>
-    const SEED = {data: {records: [{"gl": "Total Revenue", "base": "", "allowMemo": false}, {"gl": "Management Fee & platform fee", "base": "", "allowMemo": false}, {"gl": "Housekeeping & Supplies Fees", "base": "", "allowMemo": false}, {"gl": "OTA & host fees", "base": "", "allowMemo": false}, {"gl": "Total", "base": "Invoice Total (auto-summed from the four lines below)", "allowMemo": false}, {"gl": "Rent & Lease Expense", "base": "", "allowMemo": false}, {"gl": "Rent & Lease Expense - 20%", "base": "", "allowMemo": false}, {"gl": "Commercial Rent - Sales Tax", "base": "", "allowMemo": false}, {"gl": "Commercial Rent - Sales Tax - 20%", "base": "", "allowMemo": false}, {"gl": "Sales Tax Credit", "base": "", "allowMemo": false}, {"gl": "Facilities Management Program Charge", "base": "", "allowMemo": false}, {"gl": "CAM Expense", "base": "", "allowMemo": false}, {"gl": "CAM Expense- 20%", "base": "", "allowMemo": false}, {"gl": "Common Area Maintenance", "base": "", "allowMemo": false}, {"gl": "Fees - Linens & Soft Goods", "base": "", "allowMemo": false}, {"gl": "Laundry - Linens & Soft Goods", "base": "", "allowMemo": false}, {"gl": "Fees - Household", "base": "", "allowMemo": false}, {"gl": "Laundry - Household", "base": "", "allowMemo": false}, {"gl": "FYI", "base": "", "allowMemo": false}, {"gl": "Janitorial Supplies & Tools", "base": "", "allowMemo": false}, {"gl": "Outside Services - Electrical", "base": "", "allowMemo": false}, {"gl": "Outside Services - Furniture Repair", "base": "", "allowMemo": false}, {"gl": "Gas - Propane", "base": "", "allowMemo": false}, {"gl": "Pool & Spa care", "base": "", "allowMemo": false}, {"gl": "Outside Services - Plumbing", "base": "", "allowMemo": false}, {"gl": "Outside Services - Building Reactive", "base": "", "allowMemo": false}, {"gl": "Outside Services - Permits", "base": "", "allowMemo": false}, {"gl": "Unit Items & Small Appliances", "base": "", "allowMemo": false}, {"gl": "Seasonal Decor and Supplies", "base": "", "allowMemo": false}, {"gl": "FM: Team Events", "base": "", "allowMemo": false}, {"gl": "Owner Collections/Payments in", "base": "", "allowMemo": false}, {"gl": "Unit Supplies", "base": "", "allowMemo": false}, {"gl": "Reactive Supplies - Electrical", "base": "", "allowMemo": false}, {"gl": "Reactive Supplies - Grounds", "base": "", "allowMemo": false}, {"gl": "Photography & Staging Expenses", "base": "", "allowMemo": false}, {"gl": "Outside Services - HVAC - Reactive", "base": "", "allowMemo": false}, {"gl": "Guest Relations", "base": "", "allowMemo": false}, {"gl": "Reactive Supplies - Plumbing", "base": "", "allowMemo": false}, {"gl": "Owner Stay Expense", "base": "", "allowMemo": false}, {"gl": "CAPEX", "base": "", "allowMemo": false}, {"gl": "Reactive Supplies - Other", "base": "", "allowMemo": false}, {"gl": "Outside Services - Signage", "base": "", "allowMemo": false}, {"gl": "Reactive Supplies - HVAC", "base": "", "allowMemo": false}, {"gl": "Broker Fee", "base": "", "allowMemo": false}, {"gl": "Outside Services - Building", "base": "", "allowMemo": false}]}};
+    /* ==== DATA FROM YOUR SHEET (unchanged) ==== */
+    const SEED = {data: {records: [
+      {"gl": "Total Revenue", "base": "", "allowMemo": false},
+      {"gl": "Management Fee & platform fee", "base": "", "allowMemo": false},
+      {"gl": "Housekeeping & Supplies Fees", "base": "", "allowMemo": false},
+      {"gl": "OTA & host fees", "base": "", "allowMemo": false},
+      {"gl": "Total", "base": "Invoice Total (auto-summed from the four lines below)", "allowMemo": false},
+      {"gl": "Rent & Lease Expense", "base": "", "allowMemo": false},
+      {"gl": "Rent & Lease Expense - 20%", "base": "", "allowMemo": false},
+      {"gl": "Commercial Rent - Sales Tax", "base": "", "allowMemo": false},
+      {"gl": "Commercial Rent - Sales Tax - 20%", "base": "", "allowMemo": false},
+      {"gl": "Sales Tax Credit", "base": "", "allowMemo": false},
+      {"gl": "Facilities Management Program Charge", "base": "", "allowMemo": false},
+      {"gl": "CAM Expense", "base": "", "allowMemo": false},
+      {"gl": "CAM Expense- 20%", "base": "", "allowMemo": false},
+      {"gl": "Common Area Maintenance", "base": "", "allowMemo": false},
+      {"gl": "Fees - Linens & Soft Goods", "base": "", "allowMemo": false},
+      {"gl": "Laundry - Linens & Soft Goods", "base": "", "allowMemo": false},
+      {"gl": "Fees - Household", "base": "", "allowMemo": false},
+      {"gl": "Laundry - Household", "base": "", "allowMemo": false},
+      {"gl": "FYI", "base": "", "allowMemo": false},
+      {"gl": "Janitorial Supplies & Tools", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Electrical", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Furniture Repair", "base": "", "allowMemo": false},
+      {"gl": "Gas - Propane", "base": "", "allowMemo": false},
+      {"gl": "Pool & Spa care", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Plumbing", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Building Reactive", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Permits", "base": "", "allowMemo": false},
+      {"gl": "Unit Items & Small Appliances", "base": "", "allowMemo": false},
+      {"gl": "Seasonal Decor and Supplies", "base": "", "allowMemo": false},
+      {"gl": "FM: Team Events", "base": "", "allowMemo": false},
+      {"gl": "Owner Collections/Payments in", "base": "", "allowMemo": false},
+      {"gl": "Unit Supplies", "base": "", "allowMemo": false},
+      {"gl": "Reactive Supplies - Electrical", "base": "", "allowMemo": false},
+      {"gl": "Reactive Supplies - Grounds", "base": "", "allowMemo": false},
+      {"gl": "Photography & Staging Expenses", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - HVAC - Reactive", "base": "", "allowMemo": false},
+      {"gl": "Guest Relations", "base": "", "allowMemo": false},
+      {"gl": "Reactive Supplies - Plumbing", "base": "", "allowMemo": false},
+      {"gl": "Owner Stay Expense", "base": "", "allowMemo": false},
+      {"gl": "CAPEX", "base": "", "allowMemo": false},
+      {"gl": "Reactive Supplies - Other", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Signage", "base": "", "allowMemo": false},
+      {"gl": "Reactive Supplies - HVAC", "base": "", "allowMemo": false},
+      {"gl": "Broker Fee", "base": "", "allowMemo": false},
+      {"gl": "Outside Services - Building", "base": "", "allowMemo": false}
+    ]}};
 
+    /* ==== CONSTANTS ==== */
     const COMPONENT_GLS = [
       "Total Revenue",
       "Management Fee & platform fee",
@@ -94,6 +142,7 @@
     ];
     const TOTAL_GL_NAME = "Total";
 
+    /* ==== HELPERS ==== */
     const $ = sel => document.querySelector(sel);
     const fmt = n => (isNaN(n)?0:n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
     const parseAmt = v => { if (!v) return 0; v = String(v).replace(/[,\\s\\$]/g,""); return parseFloat(v)||0; };
@@ -102,11 +151,27 @@
     const save = (p,m) => localStorage.setItem(key(p), JSON.stringify(m));
     const csvEscape = s => { s=String(s); return /[",\\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
 
+    /* ==== LABEL NORMALIZATION (for summary grouping) ==== */
+    function displayLabelForKey(k){
+      const [gl, base] = k.split("||");
+      // Use fixed description if present, otherwise the GL name
+      return (base && base.trim()) ? base.trim() : gl;
+    }
+    function normalizeLabel(label){
+      // unify dashes, strip trailing "- 20%" variations, and squeeze spaces
+      let s = (label || "").trim().replace(/[—–]/g, "-");
+      s = s.replace(/\s*-\s*20%$/i, "");  // handles "- 20%" or "-20%"
+      s = s.replace(/\s+/g, " ").trim();
+      return s;
+    }
+
+    /* ==== STATE ==== */
     let period = new Date().toISOString().slice(0,7);
     let filter = "";
     const base = SEED.data.records;
     const rowsDiv = $("#rows"), summaryDiv = $("#summary");
 
+    /* ==== CORE LOGIC ==== */
     function findRecKeyByGL(glName){
       const r = base.find(b => b.gl === glName);
       return r ? (r.gl + "||" + r.base) : null;
@@ -123,21 +188,23 @@
     }
 
     function computeAirbaseDescription(store){
-      const parts = computeComponentAmounts(store).map(x => `${x.gl} (${fmt(x.amount)})`);
+      // POSITIVE values in the description (absolute value)
+      const parts = computeComponentAmounts(store).map(x => `${x.gl} (${fmt(Math.abs(x.amount))})`);
       return parts.join(", ");
     }
 
     function computeTotalFromComponents(store){
+      // Total remains the signed sum (for correct math)
       return computeComponentAmounts(store).reduce((a,b)=>a+b.amount,0);
     }
 
+    /* ==== RENDER ==== */
     function render(){
       $("#period").value = period;
       const store = load(period);
       rowsDiv.innerHTML = "";
-      let countMemo = 0;
-      let total = 0;
 
+      // Airbase description (absolute values)
       $("#airbaseDesc").value = computeAirbaseDescription(store);
 
       const items = base.filter(r => !filter || (r.gl + " " + r.base).toLowerCase().includes(filter));
@@ -161,7 +228,7 @@
         baseSpan.textContent = r.base || (isTotalRow ? "Total (auto-calculated)" : "");
         descTop.appendChild(baseSpan);
 
-        if (r.allowMemo) {
+        if (r.allowMemo && !isTotalRow) {
           const memoBadge = document.createElement("span");
           memoBadge.className = "pill";
           memoBadge.style.marginLeft = "8px";
@@ -170,40 +237,7 @@
         }
         descWrap.appendChild(descTop);
 
-        let amountInput;
-
-        if (r.allowMemo && !isTotalRow) {
-          const memoInput = document.createElement("input");
-          memoInput.type = "text";
-          memoInput.placeholder = "Add text after ':'";
-          memoInput.value = existing.memo || "";
-          memoInput.className = "descInput small";
-          memoInput.addEventListener("input", () => {
-            const s = load(period);
-            const rec = s[recKey] || {};
-            rec.memo = memoInput.value;
-            rec.amount = parseAmt(amountInput.value);
-            s[recKey] = rec;
-            save(period, s);
-            updateSummary();
-          });
-          descWrap.appendChild(memoInput);
-          countMemo++;
-        } else if (!isTotalRow) {
-          const hint = document.createElement("div");
-          hint.className = "small";
-          hint.style.color = "var(--muted)";
-          hint.textContent = "Fixed description";
-          descWrap.appendChild(hint);
-        } else {
-          const hint = document.createElement("div");
-          hint.className = "small";
-          hint.style.color = "var(--muted)";
-          hint.textContent = "Auto-sum from the four lines; description uses each amount in parentheses.";
-          descWrap.appendChild(hint);
-        }
-
-        amountInput = document.createElement("input");
+        let amountInput = document.createElement("input");
         amountInput.type = "text";
         amountInput.inputMode = "decimal";
         amountInput.className = "amount mono";
@@ -214,7 +248,7 @@
           const setComputed = () => {
             const s = load(period);
             amountInput.value = fmt(computeTotalFromComponents(s));
-            updateSummary();
+            updateSummary(); // keep summary in sync
           };
           setComputed();
         } else {
@@ -228,8 +262,9 @@
             s[recKey] = rec;
             save(period, s);
             amountInput.value = n ? fmt(n) : "";
-            $("#airbaseDesc").value = computeAirbaseDescription(s);
-            render(); // refresh computed total line
+            // refresh dependent views
+            $("#airbaseDesc").value = computeAirbaseDescription(s); // positive in description
+            render(); // re-renders Total & Summary
           };
           amountInput.addEventListener("blur", normalize);
           amountInput.addEventListener("keydown", (e) => { if (e.key === "Enter"){ e.preventDefault(); normalize(); }});
@@ -241,9 +276,10 @@
         rowsDiv.appendChild(row);
       });
 
+      // Header stats & grand total
       const s2 = load(period);
       const lines = Object.entries(s2).map(([k,v]) => ({k, n: parseAmt(v.amount)})).filter(x=>x.n);
-      const totalKey = findRecKeyByGL("Total");
+      const totalKey = findRecKeyByGL(TOTAL_GL_NAME);
       const manualTotal = lines.reduce((a,b)=>a+b.n,0);
       const compTotal = computeTotalFromComponents(s2);
       const finalGrand = totalKey ? (manualTotal - (s2[totalKey]?.amount || 0) + compTotal) : manualTotal;
@@ -257,33 +293,34 @@
       toggleZeroRows();
     }
 
+    /* ==== SUMMARY (group by fixed description, combine "- 20%" variants, show positive in parens) ==== */
     function updateSummary(){
       const s = load(period);
-      const totalKey = findRecKeyByGL("Total");
-      if (totalKey){ s[totalKey] = {memo:"", amount: computeTotalFromComponents(s)}; }
-      const lines = Object.entries(s).map(([k,v])=>{
-        const [gl, base] = k.split("||");
-        return { gl, desc: base + (v.memo ? ": " + v.memo : ""), amount: parseAmt(v.amount) };
-      }).filter(x => x.amount);
-
-      const byGl = new Map();
-      lines.forEach(({gl, desc, amount})=>{
-        const cur = byGl.get(gl) || { total:0, rows:[] };
-        cur.total += amount;
-        cur.rows.push({desc, amount});
-        byGl.set(gl, cur);
+      // Build aggregated map: normalized label -> sum
+      const agg = new Map();
+      Object.entries(s).forEach(([k,v])=>{
+        const [gl] = k.split("||");
+        if (gl === TOTAL_GL_NAME) return; // skip computed total row
+        const amt = parseAmt(v.amount);
+        if (!amt) return;
+        const disp = displayLabelForKey(k);
+        const norm = normalizeLabel(disp).toLowerCase();
+        const current = agg.get(norm) || { label: normalizeLabel(disp), sum: 0 };
+        current.sum += amt; // signed sum
+        agg.set(norm, current);
       });
 
-      const total = lines.reduce((a,b)=>a+b.amount,0);
-      let html = `<div class="flex"><div class="pill">Lines: ${lines.length}</div><div class="right total">Total: <span class="mono">$${fmt(total)}</span></div></div><div class="divider"></div>`;
-      byGl.forEach((val, gl) => {
-        html += `<div class="flex"><div class="mono">${gl}</div><div class="right mono">$${fmt(val.total)}</div></div>`;
-        val.rows.forEach(r => {
-          html += `<div class="flex small" style="color:var(--muted)"><div>${r.desc}</div><div class="right mono">$${fmt(r.amount)}</div></div>`;
-        });
-        html += `<div class="divider"></div>`;
-      });
-      document.getElementById("summary").innerHTML = html || '<div style="color:var(--muted)">No amounts entered yet.</div>';
+      if (agg.size === 0){
+        document.getElementById("summary").innerHTML = '<div style="color:var(--muted)">No amounts entered yet.</div>';
+        return;
+      }
+
+      // Render each aggregated line: Label (abs(sum))
+      const parts = Array.from(agg.values())
+        .sort((a,b)=>a.label.localeCompare(b.label))
+        .map(x => `<div class="flex small"><div>${x.label}</div><div class="right mono">(${fmt(Math.abs(x.sum))})</div></div>`)
+        .join("");
+      document.getElementById("summary").innerHTML = parts;
     }
 
     function toggleZeroRows(){
@@ -297,6 +334,7 @@
       });
     }
 
+    /* ==== EVENTS ==== */
     document.getElementById("period").addEventListener("change", e => { period = e.target.value || period; render(); });
     document.getElementById("newPeriod").addEventListener("click", () => {
       const p = document.getElementById("period").value; if (!p) return;
@@ -336,6 +374,7 @@
       }
     });
 
+    // Kick off
     render();
   </script>
 </body>
