@@ -2,128 +2,220 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Invoice Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GL Entry Tool</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f2f5;
-      margin: 0;
-      padding: 20px;
+    :root {
+      --bg: #0b0d12; --card: #121826; --muted: #9aa4b2; --text: #e6e9ef; --accent: #6aa6ff; --border: #212a3a;
     }
-    .dashboard {
-      max-width: 1200px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .section {
-      margin-top: 40px;
-    }
-    .section h2 {
-      color: #444;
-      margin-bottom: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #f9f9f9;
-    }
-    input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 6px;
-      box-sizing: border-box;
-    }
-    .total {
-      text-align: right;
-      font-weight: bold;
-      padding: 10px;
-      background-color: #eef;
-    }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:24px; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 1200px at 20% -10%, #1b2433 0%, var(--bg) 60%); color: var(--text); }
+    h1 { margin:0 0 6px; font-size:24px; }
+    .sub { color:var(--muted); margin-bottom:18px; }
+    .wrap { display:grid; grid-template-columns:1.2fr 2fr; gap:16px; align-items:start; }
+    .card { background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+      border:1px solid var(--border); border-radius:16px; padding:16px; backdrop-filter: blur(6px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05); }
+    .controls { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+    button, select, input[type="text"] { border:1px solid var(--border); background:#0f1522; color:var(--text); padding:8px 10px; border-radius:10px; font-size:13px; }
+    button:hover { border-color:var(--accent); }
+    .row { display:grid; grid-template-columns: 160px 1fr 0.8fr; gap:8px; align-items:start; }
+    .row + .row { margin-top:8px; }
+    .pill { font-size:11px; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted); }
+    .total { font-weight:700; font-size:16px; }
+    .amount { width:100%; text-align:right; }
+    .descInput { width:100%; }
+    .grid { display:grid; gap:10px; }
+    .flex { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .right { margin-left:auto; }
+    .small { font-size:12px; }
+    .divider { height:1px; background:var(--border); margin:8px 0; }
+    .stickyFooter { position: sticky; bottom:0; background:#0f1522; border-top:1px solid var(--border); padding:8px; border-radius:0 0 16px 16px; display:flex; gap:10px; align-items:center; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; }
+    .note { color:var(--muted); font-size:12px; }
+    .search { width:100%; }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <h1>Invoice Dashboard</h1>
-
-    <div class="section" id="operating-expenses">
-      <h2>Operating Expenses</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>GL Code</th>
-            <th>Line</th>
-            <th>Area</th>
-            <th>Description</th>
-            <th>Detail</th>
-            <th>Amount (USD)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>OW</td>
-            <td>4.0</td>
-            <td>Operating</td>
-            <td>CAM Expense</td>
-            <td>—</td>
-            <td><input type="number" class="amount" data-group="operating" /></td>
-          </tr>
-          <tr>
-            <td>OW</td>
-            <td>12.0</td>
-            <td>Operating</td>
-            <td>Reactive Supplies - Fire & Safety:</td>
-            <td><input type="text" placeholder="e.g. Smoke Detector" /></td>
-            <td><input type="number" class="amount" data-group="operating" /></td>
-          </tr>
-          <tr>
-            <td>OW</td>
-            <td>13.0</td>
-            <td>Operating</td>
-            <td>Maintenance:</td>
-            <td><input type="text" placeholder="e.g. Plumbing" /></td>
-            <td><input type="number" class="amount" data-group="operating" /></td>
-          </tr>
-          <!-- Add more rows as needed -->
-        </tbody>
-      </table>
-      <div class="total" id="total-operating">Total: $0.00</div>
+  <header class="card">
+    <h1>GL Entry Tool</h1>
+    <div class="sub">GLs and base descriptions hard-coded from your spreadsheet. Lines that had a colon <span class="mono">:</span> allow a memo. Amounts save by <span class="mono">YYYY-MM</span> in localStorage.</div>
+    <div class="controls">
+      <input id="period" type="month" />
+      <button id="newPeriod">Start Period</button>
+      <button id="save">Save</button>
+      <button id="exportCsv">Export CSV</button>
+      <button id="exportJson">Export JSON</button>
+      <label class="pill"><input id="showZero" type="checkbox" checked> Show zero rows</label>
+      <input id="q" class="search" placeholder="Search GL or description…" />
     </div>
+  </header>
 
-    <!-- Repeat similar sections for Revenue, Fees, etc. -->
+  <main class="wrap">
+    <section class="card">
+      <div class="flex">
+        <div class="pill">GL Count: <span id="glCount"></span></div>
+        <div class="pill">Memo-enabled: <span id="memoCount"></span></div>
+        <div class="right total">Total: <span id="grandTotal" class="mono">$0.00</span></div>
+      </div>
+      <div class="divider"></div>
+      <div id="rows" class="grid"></div>
+      <div class="stickyFooter">
+        <div class="total">Total: <span id="grandTotal2" class="mono">$0.00</span></div>
+        <div class="right note">Tip: Enter formats on blur/Enter. Switch the month to keep period-specific values.</div>
+      </div>
+    </section>
 
-  </div>
+    <aside class="card">
+      <h3 style="margin-top:0">Summary</h3>
+      <div id="summary"></div>
+    </aside>
+  </main>
 
   <script>
-    function updateTotals() {
-      const groups = ['operating']; // Add more groups as needed
-      groups.forEach(group => {
-        const inputs = document.querySelectorAll(`.amount[data-group="${group}"]`);
-        let total = 0;
-        inputs.forEach(input => {
-          const val = parseFloat(input.value);
-          if (!isNaN(val)) total += val;
-        });
-        document.getElementById(`total-${group}`).textContent = `Total: $${total.toFixed(2)}`;
+    // ---- Seed from your spreadsheet ----
+    const SEED = {data: {records: [
+      {"gl": "Total Revenue", "base": "", "allowMemo": false},
+      {"gl": "Management Fee & platform fee", "base": "", "allowMemo": false},
+      {"gl": "Housekeeping & Supplies Fees", "base": "", "allowMemo": false},
+      {"gl": "OTA & host fees", "base": "", "allowMemo": false},
+      {"gl": "Total", "base": "Total Revenue (13,306.25), Management Fee & platform...Housekeeping & Supplies Fees (2.002), OTA & host fees (429.05)", "allowMemo": false},
+      {"gl": "7810", "base": "Repairs & Maintenance", "allowMemo": false},
+      {"gl": "7810", "base": "Repairs & Maintenance - In Units", "allowMemo": false},
+      {"gl": "7850", "base": "Small Tools & Equipment", "allowMemo": false},
+      {"gl": "7855", "base": "Supplies", "allowMemo": false},
+      {"gl": "7860", "base": "Uniforms", "allowMemo": false},
+      {"gl": "7865", "base": "Janitorial", "allowMemo": false},
+      {"gl": "7600", "base": "Utilities", "allowMemo": false},
+      {"gl": "7630", "base": "Water", "allowMemo": false},
+      {"gl": "7610", "base": "Electric", "allowMemo": false},
+      {"gl": "7620", "base": "Gas", "allowMemo": false},
+      {"gl": "7640", "base": "Sewer", "allowMemo": false},
+      {"gl": "7650", "base": "Garbage", "allowMemo": false},
+      {"gl": "7700", "base": "Cable/Internet", "allowMemo": false},
+      {"gl": "7710", "base": "Pest Control", "allowMemo": false},
+      {"gl": "7720", "base": "Security", "allowMemo": false},
+      {"gl": "7800", "base": "Facilities Maintenance", "allowMemo": false},
+      {"gl": "7805", "base": "Landscaping", "allowMemo": false},
+      {"gl": "7820", "base": "Pool/Spa", "allowMemo": false},
+      {"gl": "7830", "base": "Elevator", "allowMemo": false},
+      {"gl": "7840", "base": "Fire Alarm/Sprinkler", "allowMemo": false},
+      {"gl": "7845", "base": "Life Safety", "allowMemo": false},
+      {"gl": "7890", "base": "Other Facilities Expense", "allowMemo": false},
+      {"gl": "7300", "base": "Insurance", "allowMemo": false},
+      {"gl": "7310", "base": "Property Insurance", "allowMemo": false},
+      {"gl": "7320", "base": "Liability Insurance", "allowMemo": false},
+      {"gl": "7330", "base": "Flood Insurance", "allowMemo": false},
+      {"gl": "7340", "base": "Wind Insurance", "allowMemo": false},
+      {"gl": "7350", "base": "Workers Comp", "allowMemo": false},
+      {"gl": "7400", "base": "Taxes", "allowMemo": false},
+      {"gl": "7410", "base": "Property Taxes", "allowMemo": false},
+      {"gl": "7420", "base": "Business License & Fees", "allowMemo": false},
+      {"gl": "7500", "base": "Professional Fees", "allowMemo": false},
+      {"gl": "7510", "base": "Legal", "allowMemo": false},
+      {"gl": "7520", "base": "Accounting", "allowMemo": false},
+      {"gl": "7530", "base": "Consulting", "allowMemo": false}
+    ]}};
+
+    // ---- Helpers ----
+    const $ = sel => document.querySelector(sel);
+    const fmt = n => (isNaN(n)?0:n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    const parseAmt = v => { if(!v) return 0; v=String(v).replace(/[,\\s\\$]/g,""); return parseFloat(v)||0; };
+    const key = p => `gltool:${p}`;
+    const load = p => { try { return JSON.parse(localStorage.getItem(key(p)))||{} } catch { return {} } };
+    const save = (p,m) => localStorage.setItem(key(p), JSON.stringify(m));
+    const csvEscape = s => { s=String(s); return /[",\\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
+
+    // ---- State ----
+    let period = new Date().toISOString().slice(0,7);
+    let filter = "";
+    const base = SEED.data.records;
+    const rowsDiv = $("#rows"), summaryDiv = $("#summary");
+
+    function render() {
+      $("#period").value = period;
+      const store = load(period);
+      rowsDiv.innerHTML = "";
+      let countMemo = 0, total = 0;
+
+      const items = base.filter(r => !filter || (r.gl + " " + r.base).toLowerCase().includes(filter));
+
+      items.forEach(r => {
+        if (r.allowMemo) countMemo++;
+        const recKey = r.gl + "||" + r.base;
+        const existing = store[recKey] || { memo: "", amount: 0 };
+        const amt = parseAmt(existing.amount); total += amt;
+
+        const row = document.createElement("div"); row.className = "row"; row.dataset.key = recKey;
+        const gl = document.createElement("div"); gl.className = "mono"; gl.textContent = r.gl;
+        const descWrap = document.createElement("div"); const descTop = document.createElement("div");
+        const baseSpan = document.createElement("span"); baseSpan.textContent = r.base; descTop.appendChild(baseSpan);
+        if (r.allowMemo) { const memoBadge = document.createElement("span"); memoBadge.className = "pill"; memoBadge.style.marginLeft="8px"; memoBadge.textContent="memo"; descTop.appendChild(memoBadge); }
+        descWrap.appendChild(descTop);
+
+        let amountInput;
+        if (r.allowMemo) {
+          const memoInput = document.createElement("input"); memoInput.type = "text"; memoInput.placeholder = "Add text after ':'"; memoInput.value = existing.memo || ""; memoInput.className = "descInput small";
+          memoInput.addEventListener("input", () => { const s = load(period); const rec = s[recKey] || {}; rec.memo = memoInput.value; rec.amount = parseAmt(amountInput.value); s[recKey] = rec; save(period, s); updateSummary(); });
+          descWrap.appendChild(memoInput);
+        } else { const hint = document.createElement("div"); hint.className = "small muted"; hint.textContent = "Fixed description"; descWrap.appendChild(hint); }
+
+        amountInput = document.createElement("input"); amountInput.type = "text"; amountInput.inputMode = "decimal"; amountInput.className = "amount mono"; amountInput.value = existing.amount || ""; amountInput.placeholder = "0.00";
+        const normalize = () => { const s = load(period); const rec = s[recKey] || {}; const n = parseAmt(amountInput.value); rec.amount = n; s[recKey] = rec; save(period, s); amountInput.value = n ? fmt(n) : ""; updateSummary(); };
+        amountInput.addEventListener("blur", normalize);
+        amountInput.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); normalize(); } });
+
+        row.appendChild(gl); row.appendChild(descWrap); row.appendChild(amountInput); rowsDiv.appendChild(row);
+      });
+
+      document.getElementById("glCount").textContent = base.length;
+      document.getElementById("memoCount").textContent = countMemo;
+      document.getElementById("grandTotal").textContent = "$" + fmt(total);
+      document.getElementById("grandTotal2").textContent = "$" + fmt(total);
+      updateSummary(); toggleZeroRows();
+    }
+
+    function updateSummary() {
+      const s = load(period);
+      const lines = Object.entries(s).map(([k,v]) => { const [gl, base] = k.split("||"); return { gl, desc: base + (v.memo ? ": " + v.memo : ""), amount: parseAmt(v.amount) }; }).filter(x => x.amount);
+      const byGl = new Map(); lines.forEach(({gl, desc, amount}) => { const cur = byGl.get(gl) || { total:0, rows:[] }; cur.total += amount; cur.rows.push({desc, amount}); byGl.set(gl, cur); });
+      const total = lines.reduce((a,b)=>a+b.amount,0);
+      let html = `<div class="flex"><div class="pill">Lines: ${lines.length}</div><div class="right total">Total: <span class="mono">$${fmt(total)}</span></div></div><div class="divider"></div>`;
+      byGl.forEach((val, gl) => { html += `<div class="flex"><div class="mono">${gl}</div><div class="right mono">$${fmt(val.total)}</div></div>`; val.rows.forEach(r => { html += `<div class="flex small muted"><div>${r.desc}</div><div class="right mono">$${fmt(r.amount)}</div></div>`; }); html += `<div class="divider"></div>`; });
+      document.getElementById("summary").innerHTML = html || '<div class="muted">No amounts entered yet.</div>';
+      document.getElementById("grandTotal").textContent = "$" + fmt(total);
+      document.getElementById("grandTotal2").textContent = "$" + fmt(total);
+    }
+
+    function toggleZeroRows() {
+      const show = document.getElementById("showZero").checked;
+      const s = load(period);
+      document.querySelectorAll("#rows .row").forEach(row => {
+        const rec = s[row.dataset.key] || {};
+        const amt = parseAmt(rec.amount);
+        row.style.display = (show || amt) ? "grid" : "none";
       });
     }
 
-    document.querySelectorAll('.amount').forEach(input => {
-      input.addEventListener('input', updateTotals);
+    document.getElementById("period").addEventListener("change", e => { period = e.target.value || period; render(); });
+    document.getElementById("newPeriod").addEventListener("click", () => { const p = document.getElementById("period").value; if (!p) return; period = p; const tmpl = {}; base.forEach(r => { tmpl[r.gl + "||" + r.base] = { memo:"", amount:0 }; }); save(period, tmpl); render(); });
+    document.getElementById("save").addEventListener("click", () => { save(period, load(period)); alert("Saved for period " + period); });
+    document.getElementById("exportCsv").addEventListener("click", () => {
+      const s = load(period);
+      const rows = [["Period","GL","Description","Amount"]];
+      Object.entries(s).forEach(([k,v]) => { const [gl, base] = k.split("||"); rows.push([period, gl, base + (v.memo?": "+v.memo:""), parseAmt(v.amount)]) });
+      const csv = rows.map(r => r.map(csvEscape).join(",")).join("\\n");
+      const blob = new Blob([csv], {type:"text/csv"});
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `gl-entries-${period}.csv`; a.click();
     });
+    document.getElementById("exportJson").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify({period, entries: load(period)}, null, 2)], {type:"application/json"});
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `gl-entries-${period}.json`; a.click();
+    });
+    document.getElementById("showZero").addEventListener("change", toggleZeroRows);
+    document.getElementById("q").addEventListener("input", e => { filter = (e.target.value || "").toLowerCase(); render(); });
+    render();
   </script>
 </body>
 </html>
-
